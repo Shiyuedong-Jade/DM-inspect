@@ -1,0 +1,8 @@
+{
+  "//": "本目录是从 dm8-inspect 原样 vendor 过来的零依赖巡检引擎：CommonJS 源码，未做任何模块化改造。",
+  "//2": "插件包本身是 ESM（type: module），若不在这里声明 type: commonjs，Node 会把这些 .js 当成 ESM 加载，require() 直接报错。",
+  "//3": "写一个最近作用域的 package.json 是最干净的做法——引擎代码一行都不用改（只动了 drivers/jdbc.js 与 remote.js 里各一处工作目录）。",
+  "name": "dm8-inspect-engine",
+  "private": true,
+  "type": "commonjs"
+}

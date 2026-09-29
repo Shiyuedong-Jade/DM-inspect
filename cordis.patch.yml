@@ -1,0 +1,26 @@
+# 本插件作为 bundle 的插入清单。
+#
+# 装法是 `dsh plugin --profile web add file:<本目录绝对路径>`：
+# CLI 看到 package.json 里有 dsh.bundle.patch，会把包名自动追加进
+# dsh.profile.bundles，**并自动带上这一行**，不需要手改 profile。
+#
+# 如果不想用 bundle 路线（例如只是想临时试一下），也可以手工在
+# ~/.dsh/profiles/web/cordis.patch.yml 里加同样的一行：
+# profile 是 patchReload: live 的，保存即生效、不用重启 dsh web。
+#   - insert:
+#       - id: dm8-inspect
+#         name: 'dsh-plugin-dm8-inspect'
+#
+# 想覆盖配置就在行里加 config（下面注释掉的几项是最常改的）：
+#   - insert:
+#       - id: dm8-inspect
+#         name: 'dsh-plugin-dm8-inspect'
+#         config:
+#           topN: 20
+#           tsWarnPct: 70
+#           tsCritPct: 85
+#           # 只在你想把工作目录放到别处时改；默认 ~/.dsh/dm8-inspect
+#           home: 'D:\dm8-inspect-home'
+- insert:
+    - id: dm8-inspect
+      name: 'dsh-plugin-dm8-inspect'

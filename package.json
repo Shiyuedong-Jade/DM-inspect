@@ -1,0 +1,58 @@
+{
+  "name": "dsh-plugin-dm8-inspect",
+  "version": "0.1.0",
+  "private": true,
+  "description": "达梦 DM8 数据库巡检插件：注册 dm8_inspect 工具，执行 85 项只读巡检并生成 HTML 报告。",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shiyuedong-Jade/DM-inspect.git"
+  },
+  "homepage": "https://github.com/Shiyuedong-Jade/DM-inspect#readme",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./client/client.js",
+    "./package.json": "./package.json",
+    "./cordis.patch.yml": "./cordis.patch.yml"
+  },
+  "files": [
+    "lib",
+    "client",
+    "engine",
+    "assets",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "smoke": "node tools/smoke.mjs"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-credentials": "^0.1.5-rc.2",
+    "@deepseek-ai/dsh-tools": "^0.1.5-rc.2",
+    "@deepseek-ai/schemastery": "^3.18.1"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "keywords": [
+    "deepseek",
+    "harness",
+    "dsh",
+    "dsh-plugin",
+    "dm8",
+    "dameng",
+    "达梦",
+    "inspection"
+  ],
+  "license": "MIT"
+}
