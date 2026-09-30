@@ -7,7 +7,8 @@
  *   3. 返回值能通过注册表自己的校验器 `validateJsonSchemaValue`；
  *   4. 集群路径（2 个目标）与连接失败路径（不落盘）的返回值同样合法；
  *   5. 渲染出的文字摘要包含关键信息（汇总数字、报告路径、present 提示）；
- *   6. 缺驱动 jar / 缺口令这类失败的报错信息给出可执行的下一步。
+ *   6. 缺驱动 jar / 缺口令这类失败的报错信息给出可执行的下一步；
+ *   7. 账号与口令的来源必须写在结果里（显式参数会静默盖掉卡片里的账号）。
  *
  * 用法：node tools/smoke.mjs
  */
@@ -20,6 +21,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { makeDm8Tool } from '../lib/tool.js';
 import { loadEngine } from '../lib/engine.js';
 import { prepareHome, defaultHome } from '../lib/workspace.js';
+import { setSessionForm, resetSessionForms } from '../lib/session-form.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PKG = path.resolve(HERE, '..');
@@ -374,6 +376,67 @@ async function loadDefineTool() {
     ok(prep.bridge && fs.existsSync(prep.bridge), 'DmBridge.java 已从插件包复制过去');
     ok(fs.readFileSync(prep.bridge, 'utf8').includes('class DmBridge'), '复制过来的确实是桥接源码');
     ok(prep.jars.length === 0, '没放 jar 时如实报告 0 个');
+  }
+
+  console.log('\n=== 12. 账号来源要报出来，SSH 备注不能留占位符 ===');
+  {
+    // 显式参数会静默盖掉卡片里填的账号：卡片填 awr1、调用里带了 user=SYSDBA，
+    // 结果就是拿 awr1 的口令去登 SYSDBA，而失败只表现为「连接超时」。
+    // 所以「账号从哪来」必须写进结果，否则隔着一次覆盖根本看不出来。
+    const sid = 'smoke-credsource';
+    const scratch = path.join(os.tmpdir(), 'dm8-inspect-smoke-src');
+    fs.rmSync(scratch, { recursive: true, force: true });
+    const exec = {
+      signal: new AbortController().signal,
+      agent: { session: { id: sid, header: { id: sid, cwd: scratch } } },
+    };
+    try {
+      resetSessionForms();
+      setSessionForm(sid, {
+        user: 'awr1',
+        password: 'pw',
+        targets: '127.0.0.1:5236',
+        sshUser: 'root',
+        sshPassword: 'pw',
+      });
+
+      // 卡片 user=awr1、调用参数 user=SYSDBA：后者赢，且必须说明是它赢的
+      const v = await spec.execute({ driver: 'demo', user: 'SYSDBA' }, exec);
+      ok(
+        v.notes.some((n) => /账号来源：本次调用参数（SYSDBA）/.test(n)),
+        '显式参数覆盖卡片时，结果里说明账号来自调用参数'
+      );
+      ok(!v.notes.some((n) => /账号来源：调用卡片/.test(n)), '不会同时报两个账号来源');
+
+      // 不传 user：用卡片里的 awr1
+      const v2 = await spec.execute({ driver: 'demo' }, exec);
+      ok(
+        v2.notes.some((n) => /账号来源：调用卡片（awr1）/.test(n)),
+        '卡片里的账号被用上，并标明来源'
+      );
+
+      // 卡片与参数都没有：落到默认账号
+      resetSessionForms();
+      const v3 = await spec.execute(
+        { driver: 'demo', targets: [{ host: '127.0.0.1', port: 5236 }] },
+        exec
+      );
+      ok(
+        v3.notes.some((n) => /账号来源：默认值（SYSDBA）/.test(n)),
+        '两处都没给时，标明用的是默认账号'
+      );
+
+      // SSH 备注里要写真实节点地址，不能是没被替换的占位符
+      const sshNote = v.notes.find((n) => /^OS 采集：/.test(n)) || '';
+      ok(sshNote === 'OS 采集：SSH root@127.0.0.1', 'SSH 备注里是真实节点地址：' + (sshNote || '(没有这条)'));
+      ok(
+        !v.notes.concat(v2.notes, v3.notes).some((n) => /节点 IP/.test(n)),
+        '结果里没有残留的 <节点 IP> 占位符'
+      );
+    } finally {
+      resetSessionForms();
+      fs.rmSync(scratch, { recursive: true, force: true });
+    }
   }
 
   console.log(`\n包目录：${PKG}`);
