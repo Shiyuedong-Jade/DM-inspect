@@ -213,6 +213,36 @@ node tools/live.mjs                 # 连真实库巡检一次，需 DM8_TEST_HO
 node tools/install.mjs              # 手动安装或卸载，支持 --dry-run、--uninstall
 ```
 
+### 部署与重载：改完代码为什么不生效
+
+宿主加载的不是本仓库，而是 profile 目录下的**安装副本**：
+
+```
+$DSH_HOME/profiles/web/node_modules/dsh-plugin-dm8-inspect
+```
+
+本仓库（`D:\dsh-plugins\dsh-plugin-dm8-inspect`）里改了不会自动生效。当前 profile 走的是**标准安装路线**，在 `profiles/web/package.json` 里声明成 git 依赖：
+
+```
+"dsh-plugin-dm8-inspect": "github:Shiyuedong-Jade/DM-inspect"
+```
+
+`pnpm-lock.yaml` 还会把当时解析到的提交号钉死在其中。所以从「改完本仓库」到「宿主跑起来」要两步，缺一步都不生效：
+
+1. 推到 GitHub，再更新安装副本：
+
+   ```sh
+   dsh plugin --profile web update dsh-plugin-dm8-inspect
+   ```
+
+2. 重启宿主进程（`dsh web`）。
+
+第 2 步不能省。profile 虽然声明了 `patchReload: live`，但 `live` 覆盖的只有补丁文件（`profiles/web/cordis.patch.yml` 与 home 级 patch），插件代码没有热重载通道。三条原因各自独立：该分支装载的 `@deepseek-ai/cordis-plugin-hmr` 配置是 `{ root: [] }`，其源码里 `root.length === 0` 直接判为 resolved，一个目录都不监视；改补丁文件触发的 recompose 按 entry 做 diff，entry 没变就不会重新 import；`profiles/web/pnpm-workspace.yaml` 里是 `nodeLinker: hoisted`，插件装在固定路径的普通目录里，更新后路径不变，而 Node 的 ESM 模块表按 URL 永久缓存，同一 URL 只会拿回旧模块。
+
+客户端部分（`client/client.js`）同理：更新副本并重启之后，浏览器页面还需要刷新一次。
+
+判断是否真的生效要看**行为**：传一个「改了才会成立」的输入，观察结论有没有变。`tools/verify-install.mjs` 回答的是另一个问题（安装位置能否被加载），它不比较新旧。
+
 ## 许可证
 
 [MIT](LICENSE)
