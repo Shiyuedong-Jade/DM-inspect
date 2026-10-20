@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-dm8-inspect",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "达梦 DM8 数据库巡检插件：注册 dm8_inspect 工具，执行 85 项只读巡检并生成 HTML 报告。",
   "type": "module",

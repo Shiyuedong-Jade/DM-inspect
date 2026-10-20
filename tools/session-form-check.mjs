@@ -196,7 +196,7 @@ console.log('\n=== 7. 工具侧取值优先级 ===');
   const home = path.join(os.tmpdir(), 'dm8-inspect-form-tool');
   fs.rmSync(home, { recursive: true, force: true });
   const prep = prepareHome(home);
-  fs.writeFileSync(path.join(prep.driverDir, 'DmJdbcDriver18.jar'), 'fake');
+  fs.writeFileSync(path.join(prep.driverDir, 'DmJdbcDriver8.jar'), 'fake');
 
   let seen = null;
   let clusterSeen = null;

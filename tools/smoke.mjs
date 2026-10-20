@@ -301,7 +301,7 @@ async function loadDefineTool() {
     } catch (e) {
       msg = e.message;
     }
-    ok(/DmJdbcDriver18\.jar/.test(msg), '错误信息点名了要放的 jar 文件名');
+    ok(/DmJdbcDriver8\.jar/.test(msg), '错误信息点名了要放的 jar 文件名');
     ok(/drivers/.test(msg), '错误信息给出了要放到的目录');
   }
 
@@ -312,7 +312,7 @@ async function loadDefineTool() {
     const home3 = path.join(os.tmpdir(), 'dm8-inspect-smoke-home3');
     fs.rmSync(home3, { recursive: true, force: true });
     const prep3 = prepareHome(home3);
-    fs.writeFileSync(path.join(prep3.driverDir, 'DmJdbcDriver18.jar'), 'not-a-real-jar');
+    fs.writeFileSync(path.join(prep3.driverDir, 'DmJdbcDriver8.jar'), 'not-a-real-jar');
     const spec3 = makeDm8Tool({
       defineTool: (s) => s,
       getConfig: () => Object.assign({}, cfg, { driver: 'jdbc', home: home3 }),
@@ -340,7 +340,7 @@ async function loadDefineTool() {
     const home4 = path.join(os.tmpdir(), 'dm8-inspect-smoke-home4');
     fs.rmSync(home4, { recursive: true, force: true });
     const prep4 = prepareHome(home4);
-    fs.writeFileSync(path.join(prep4.driverDir, 'DmJdbcDriver18.jar'), 'not-a-real-jar');
+    fs.writeFileSync(path.join(prep4.driverDir, 'DmJdbcDriver8.jar'), 'not-a-real-jar');
     const spec4 = makeDm8Tool({
       defineTool: (s) => s,
       getConfig: () => Object.assign({}, cfg, { driver: 'jdbc', home: home4, credentialRef: 'MY_DM8_PW' }),

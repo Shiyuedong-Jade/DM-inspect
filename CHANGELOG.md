@@ -2,6 +2,16 @@
 
 版本号遵循[语义化版本](https://semver.org/lang/zh-CN/)。
 
+## 0.1.2 — 2026-10-20
+
+只动对外文案（README 与几处错误提示），判定与采集逻辑一行未改，所以取补丁号。
+
+### 修正
+
+- 驱动文件名统一写 `DmJdbcDriver8.jar`：三个插件工作目录、两个 dev home 与 live home 里放的**都是它**，`DmJdbcDriver18.jar` 在实际环境里并不存在。README「环境要求」「安装第 2 步」、`lib/index.js` / `lib/tool.js` / `engine/drivers/jdbc.js` 的错误提示、`tools/live.mjs` 的注释与 `assets/java/DmBridge.java` 的用法示例统一改过来。
+- `engine/drivers/jdbc.js` 的**候选排序没有改**（18 → 8 → 11 → 7 → 6）：那只是「目录里有哪些 jar 就按这个优先级挑」，没有 18 自然落到 8；只把那条注释改写清楚，不再让读者以为要去装 18。
+- `tools/smoke.mjs` 里那条「错误信息点名了要放的 jar 文件名」的断言随文案改成 `DmJdbcDriver8.jar`（它是个正则字面量，`18` 与 `.jar` 之间有反斜杠，按字面替换会漏掉）。
+
 ## 0.1.1 — 2026-10-14
 
 本次只动文档，`lib/` / `client/` / `engine/` 一行未改，所以取补丁号。

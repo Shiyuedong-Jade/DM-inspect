@@ -30,7 +30,7 @@
 |---|---|
 | Node.js | ≥ 20 |
 | Java | 8 及以上（JDK 或 JRE）。11+ 以源码方式运行桥接器；8 先用 javac 编译一次，结果缓存在工作目录 |
-| 达梦 JDBC 驱动 | `DmJdbcDriver18.jar` 或 `DmJdbcDriver8.jar`，需自行提供，见[安装](#安装)第 2 步 |
+| 达梦 JDBC 驱动 | `DmJdbcDriver8.jar`，需自行提供，见[安装](#安装)第 2 步 |
 | DeepSeek Harness | 0.1.x |
 
 ## 安装
@@ -52,7 +52,7 @@ dsh plugin --profile web add file:/path/to/dsh-plugin-dm8-inspect
 ### 2. 放置达梦 JDBC 驱动
 
 驱动 jar 是达梦的商业组件，不随插件分发。把达梦安装目录下的
-`dmdbms/drivers/jdbc/DmJdbcDriver18.jar` 复制到工作目录的 `drivers/` 下：
+`dmdbms/drivers/jdbc/DmJdbcDriver8.jar` 复制到工作目录的 `drivers/` 下：
 
 | 平台 | 路径 |
 |---|---|

@@ -15,7 +15,7 @@
  * that escape prefix inside a comment: Java expands it even in comments.)
  *
  * Launch (Java 11+, no compile step):
- *     java -cp DmJdbcDriver18.jar DmBridge.java <port> <token>
+ *     java -cp DmJdbcDriver8.jar DmBridge.java <port> <token>
  * Fallback (Java 8), compile first then run:
  *     javac -encoding UTF-8 -cp <jar> -d classes DmBridge.java
  *     java -cp <jar>;<classes> DmBridge <port> <token>

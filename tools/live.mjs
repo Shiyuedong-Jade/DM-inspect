@@ -51,7 +51,7 @@ if (!targets.length || !pw) {
 }
 
 // 工作目录里没有 jar 时，从工程里的 ../dm8-inspect/drivers/ 复制一个过来。
-// 生产使用由用户自行把 DmJdbcDriver18.jar 放进 drivers/。
+// 生产使用由用户自行把 DmJdbcDriver8.jar 放进 drivers/。
 const prep0 = prepareHome(home);
 if (!prep0.jars.length && process.env.DM8_SEED_DRIVER !== '0') {
   const srcDir = path.resolve(PKG, '..', 'dm8-inspect', 'drivers');

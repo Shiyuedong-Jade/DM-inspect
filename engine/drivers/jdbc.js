@@ -4,7 +4,7 @@
  * ---------------------------------------------------------------------------
  * 通过 Java 桥接器（java/DmBridge.java）连接达梦 DM8。
  * 这是兼容性最好的一条路径：只要本机有 JDK/JRE 以及达梦自带的 JDBC 驱动 jar
- * （安装目录 dmdbms/drivers/jdbc/DmJdbcDriver18.jar）即可，无需安装任何 npm 包。
+ * （安装目录 dmdbms/drivers/jdbc/DmJdbcDriver8.jar）即可，无需安装任何 npm 包。
  *
  * 与桥接器的通信走 127.0.0.1 回环 TCP，字段使用 Base64(UTF-8) 编码，
  * 避免 Windows 控制台 GBK 编码导致的乱码与管道限制。
@@ -60,7 +60,7 @@ function listDriverJars() {
     .filter((f) => /\.jar$/i.test(f))
     .map((f) => path.join(DRIVER_DIR, f))
     .sort((a, b) => {
-      // 驱动版本要和服务端匹配。优先 DmJdbcDriver18（JDK8+ 通用），其次 8，再次 11，
+      // 驱动版本要和服务端匹配。按 jar 名挑：18 → 8 → 11 → 7 → 6（实测环境里只有 DmJdbcDriver8.jar，18 那档留给确实带了它的安装），
       // 最后才是老版本；同优先级按名称排。
       const score = (p) => {
         const n = path.basename(p).toLowerCase();
@@ -228,7 +228,7 @@ async function prepareBridgeArgs(javaInfo, port, token) {
   const jars = listDriverJars();
   if (!jars.length) {
     throw new Error(
-      '未找到达梦 JDBC 驱动 jar。请把达梦安装目录 dmdbms/drivers/jdbc/DmJdbcDriver18.jar 放入 ' +
+      '未找到达梦 JDBC 驱动 jar。请把达梦安装目录 dmdbms/drivers/jdbc/DmJdbcDriver8.jar 放入 ' +
         DRIVER_DIR +
         ' 目录（也可在页面“达梦 JDBC 驱动 jar”一栏直接上传）。'
     );
